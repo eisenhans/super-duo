@@ -114,6 +114,7 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
 
             Glide.with(this)
                     .load(imgUrl)
+                    .placeholder(R.drawable.ic_launcher)
                     .error(R.drawable.ic_launcher)
                     .into(fullBookCoverView);
             fullBookCoverView.setVisibility(View.VISIBLE);

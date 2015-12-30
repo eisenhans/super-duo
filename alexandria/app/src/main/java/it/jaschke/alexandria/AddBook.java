@@ -176,6 +176,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             ImageView bookCoverView = (ImageView) rootView.findViewById(R.id.bookCover);
             Glide.with(this)
                     .load(imgUrl)
+                    .placeholder(R.drawable.ic_launcher)
                     .error(R.drawable.ic_launcher)
                     .into(bookCoverView);
             bookCoverView.setVisibility(View.VISIBLE);
