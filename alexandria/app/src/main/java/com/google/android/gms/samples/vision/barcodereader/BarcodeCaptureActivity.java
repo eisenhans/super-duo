@@ -170,9 +170,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
         // graphics for each barcode on screen.  The factory is used by the multi-processor to
         // create a separate tracker instance for each barcode.
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
-        BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay);
-        barcodeDetector.setProcessor(
-                new MultiProcessor.Builder<>(barcodeFactory).build());
+        barcodeDetector.setProcessor(new MultiProcessor.Builder<>(new BarcodeTrackerFactory()).build());
 
         if (!barcodeDetector.isOperational()) {
             // Note: The first time that an app using the barcode or face API is installed on a
