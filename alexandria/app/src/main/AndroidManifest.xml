@@ -29,9 +29,17 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+            <meta-data
+                android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version" />
+            <meta-data
+                android:name="com.google.android.gms.vision.DEPENDENCIES"
+                android:value="barcode" />
         </activity>
 
-
+        <activity
+            android:name="com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity"
+            android:label="Read Barcode"/>
 
         <provider
             android:name=".data.BookProvider"
@@ -41,6 +49,7 @@
             android:name=".services.BookService"
             android:exported="false" >
         </service>
+
     </application>
 
 </manifest>
