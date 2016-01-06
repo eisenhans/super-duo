@@ -9,9 +9,21 @@ import com.google.android.gms.vision.barcode.Barcode;
 public class SimpleBarcodeTracker extends Tracker<Barcode> {
     private static final String LOG_TAG = SimpleBarcodeTracker.class.getName();
 
+    private Callback callback;
+
+    public SimpleBarcodeTracker(Callback callback) {
+        this.callback = callback;
+    }
+
+    public interface Callback {
+        void onFound(String barcodeValue);
+    }
+
     @Override
     public void onUpdate(Detector.Detections<Barcode> detectionResults, Barcode barcode) {
-        Log.i(LOG_TAG, "Barcode found: " + barcode.displayValue);
-        Log.i(LOG_TAG, "first detectionResult: " + detectionResults.getDetectedItems().get(0).displayValue);
+        if (barcode != null) {
+            Log.i(LOG_TAG, "Barcode found: " + barcode.displayValue);
+            callback.onFound(barcode.displayValue);
+        }
     }
 }

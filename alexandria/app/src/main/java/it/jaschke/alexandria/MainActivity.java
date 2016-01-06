@@ -12,22 +12,20 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity;
-import com.google.android.gms.vision.barcode.Barcode;
 
 import it.jaschke.alexandria.api.Callback;
 
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, Callback {
     private static final String LOG_TAG = MainActivity.class.getName();
-    public static final int RC_BARCODE_CAPTURE = 9001;
+
+    public static final int RC_SCAN_BARCODE = 1;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -43,6 +41,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     public static final String MESSAGE_EVENT = "MESSAGE_EVENT";
     public static final String MESSAGE_KEY = "MESSAGE_EXTRA";
+
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,19 +76,19 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         switch (position){
             default:
             case 0:
-                nextFragment = new ListOfBooks();
+                currentFragment = new ListOfBooks();
                 break;
             case 1:
-                nextFragment = new AddBook();
+                currentFragment = new AddBook();
                 break;
             case 2:
-                nextFragment = new About();
+                currentFragment = new About();
                 break;
 
         }
 
         fragmentManager.beginTransaction()
-                .replace(R.id.container, nextFragment)
+                .replace(R.id.container, currentFragment)
                 .addToBackStack((String) title)
                 .commit();
     }
@@ -187,29 +187,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(LOG_TAG, "requestCode = " + requestCode + ", resultCode = " + resultCode + ", intent extras = " + data.getExtras());
-        String message;
-//        if (requestCode == RC_BARCODE_CAPTURE) {
-        if (true) {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
-                if (data != null) {
-                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-//                    statusMessage.setText(R.string.barcode_success);
-//                    barcodeValue.setText(barcode.displayValue);
-                    Log.i(LOG_TAG, "Barcode read: " + barcode.displayValue);
-                    message = "Barcode read: " + barcode.displayValue;
-                } else {
-//                    statusMessage.setText(R.string.barcode_failure);
-                    Log.i(LOG_TAG, "No barcode captured, intent data is null");
-                    message = "No barcode captured, intent data is null";
-                }
-            } else {
-                Log.i(LOG_TAG, "error");
-                message = "error";
-//                statusMessage.setText(String.format(getString(R.string.barcode_error),
-//                        CommonStatusCodes.getStatusCodeString(resultCode)));
+        if (data != null && data.hasExtra(BarcodeCaptureActivity.BARCODE)) {
+            String barcode = data.getStringExtra(BarcodeCaptureActivity.BARCODE);
+
+            if (currentFragment instanceof AddBook) {
+                ((AddBook) currentFragment).updateBarcode(barcode);
             }
-            Toast.makeText(this, message, Toast.LENGTH_SHORT);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

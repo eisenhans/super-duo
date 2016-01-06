@@ -1,7 +1,6 @@
 package it.jaschke.alexandria;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +16,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity;
-import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
@@ -32,6 +26,7 @@ import it.jaschke.alexandria.services.BookService;
 
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
+
     private EditText ean;
     private final int LOADER_ID = 1;
     private View rootView;
@@ -101,21 +96,13 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 // Hint: Use a Try/Catch block to handle the Intent dispatch gracefully, if you
                 // are using an external app.
                 //when you're done, remove the toast below.
-                Context context = getActivity();
-                CharSequence text = "This button should let you scan a book for its barcode!";
-                int duration = Toast.LENGTH_SHORT;
 
-//                String barcode = readBarcode(context);
-//                if (barcode != null) {
-//                    text = barcode;
-//                }
-
-                Intent intent = new Intent(context, BarcodeCaptureActivity.class);
+                Intent intent = new Intent(getActivity(), BarcodeCaptureActivity.class);
                 intent.putExtra(BarcodeCaptureActivity.AutoFocus, true);
                 intent.putExtra(BarcodeCaptureActivity.UseFlash, false);
 
-                Log.i(TAG, "requestCode = " + MainActivity.RC_BARCODE_CAPTURE + ", intent extras = " + intent.getExtras());
-                startActivityForResult(intent, MainActivity.RC_BARCODE_CAPTURE);
+//                startActivity(intent);
+                startActivityForResult(intent, MainActivity.RC_SCAN_BARCODE);
 
 //                Toast toast = Toast.makeText(context, text, duration);
 //                toast.show();
@@ -147,28 +134,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         }
 
         return rootView;
-    }
-
-    private String readBarcode(Context context) {
-        BarcodeDetector detector = new BarcodeDetector.Builder(context).setBarcodeFormats(Barcode.EAN_13).build();
-        if(!detector.isOperational()){
-            return "Could not set up the detector!";
-        }
-        // Creates and starts the camera.  Note that this uses a higher resolution in comparison
-        // to other detection examples to enable the barcode detector to detect small barcodes
-        // at long distances.
-        CameraSource.Builder builder = new CameraSource.Builder(context, detector)
-                .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setRequestedPreviewSize(1600, 1024)
-                .setRequestedFps(15.0f);
-
-        //builder = builder.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-        //builder.setFlashMode(Camera.Parameters.FLASH_MODE_OFF).build();
-
-        CameraSource camSource = builder.build();
-
-
-        return "BarcodeDetector ready";
     }
 
     private void restartLoader(){
@@ -247,5 +212,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         activity.setTitle(R.string.scan);
+    }
+
+    void updateBarcode(String barcode) {
+        EditText barcodeEditText = (EditText) rootView.findViewById(R.id.ean);
+        barcodeEditText.setText(barcode);
     }
 }

@@ -39,7 +39,11 @@
 
         <activity
             android:name="com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity"
-            android:label="Read Barcode"/>
+            android:label="Scan Barcode">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
 
         <provider
             android:name=".data.BookProvider"
