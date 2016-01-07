@@ -27,36 +27,50 @@ import it.jaschke.alexandria.services.BookService;
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
 
-    private EditText ean;
+    private static final int RC_SCAN_BARCODE = 3;
     private final int LOADER_ID = 1;
-    private View rootView;
     private final String EAN_CONTENT="eanContent";
-    private static final String SCAN_FORMAT = "scanFormat";
-    private static final String SCAN_CONTENTS = "scanContents";
 
-    private String mScanFormat = "Format:";
-    private String mScanContents = "Contents:";
+    private ViewHolder viewHolder;
 
+    private static class ViewHolder {
+        EditText barcodeEditText;
+        TextView titleView;
+        TextView subTitleView;
+        TextView authorsView;
+        TextView categoriesView;
+        ImageView coverView;
+        View scanButton;
+        View saveButton;
+        View deleteButton;
 
-
-    public AddBook(){
+        ViewHolder(View rootView) {
+            barcodeEditText = (EditText) rootView.findViewById(R.id.ean);
+            titleView = ((TextView) rootView.findViewById(R.id.bookTitle));
+            subTitleView = ((TextView) rootView.findViewById(R.id.bookSubTitle));
+            authorsView = ((TextView) rootView.findViewById(R.id.authors));
+            categoriesView =  ((TextView) rootView.findViewById(R.id.categories));
+            coverView = (ImageView) rootView.findViewById(R.id.bookCover);
+            scanButton = rootView.findViewById(R.id.scan_button);
+            saveButton = rootView.findViewById(R.id.save_button);
+            deleteButton = rootView.findViewById(R.id.delete_button);
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(ean!=null) {
-            outState.putString(EAN_CONTENT, ean.getText().toString());
+        if (viewHolder != null && viewHolder.barcodeEditText != null) {
+            outState.putString(EAN_CONTENT, viewHolder.barcodeEditText.getText().toString());
         }
     }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
+        viewHolder = new ViewHolder(rootView);
 
-        rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
-        ean = (EditText) rootView.findViewById(R.id.ean);
-
-        ean.addTextChangedListener(new TextWatcher() {
+        viewHolder.barcodeEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 //no need
@@ -87,7 +101,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             }
         });
 
-        rootView.findViewById(R.id.scan_button).setOnClickListener(new View.OnClickListener() {
+        viewHolder.scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // This is the callback method that the system will invoke when your button is
@@ -101,36 +115,31 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 intent.putExtra(BarcodeCaptureActivity.AutoFocus, true);
                 intent.putExtra(BarcodeCaptureActivity.UseFlash, false);
 
-//                startActivity(intent);
-                startActivityForResult(intent, MainActivity.RC_SCAN_BARCODE);
-
-//                Toast toast = Toast.makeText(context, text, duration);
-//                toast.show();
-
+                startActivityForResult(intent, RC_SCAN_BARCODE);
             }
         });
 
-        rootView.findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
+        viewHolder.saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ean.setText("");
+                viewHolder.barcodeEditText.setText("");
             }
         });
 
-        rootView.findViewById(R.id.delete_button).setOnClickListener(new View.OnClickListener() {
+        viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent bookIntent = new Intent(getActivity(), BookService.class);
-                bookIntent.putExtra(BookService.EAN, ean.getText().toString());
+                bookIntent.putExtra(BookService.EAN, viewHolder.barcodeEditText.getText().toString());
                 bookIntent.setAction(BookService.DELETE_BOOK);
                 getActivity().startService(bookIntent);
-                ean.setText("");
+                viewHolder.barcodeEditText.setText("");
             }
         });
 
         if(savedInstanceState!=null){
-            ean.setText(savedInstanceState.getString(EAN_CONTENT));
-            ean.setHint("");
+            viewHolder.barcodeEditText.setText(savedInstanceState.getString(EAN_CONTENT));
+            viewHolder.barcodeEditText.setHint("");
         }
 
         return rootView;
@@ -142,10 +151,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if(ean.getText().length()==0){
+        if(viewHolder.barcodeEditText.getText().length()==0){
             return null;
         }
-        String eanStr= ean.getText().toString();
+        String eanStr= viewHolder.barcodeEditText.getText().toString();
         if(eanStr.length()==10 && !eanStr.startsWith("978")){
             eanStr="978"+eanStr;
         }
@@ -166,31 +175,30 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         }
 
         String bookTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
-        ((TextView) rootView.findViewById(R.id.bookTitle)).setText(bookTitle);
+        viewHolder.titleView.setText(bookTitle);
 
         String bookSubTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.SUBTITLE));
-        ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText(bookSubTitle);
+        viewHolder.subTitleView.setText(bookSubTitle);
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
         String[] authorsArr = authors.split(",");
-        ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
-        ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));
+        viewHolder.authorsView.setLines(authorsArr.length);
+        viewHolder.authorsView.setText(authors.replace(",", "\n"));
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
         if(Patterns.WEB_URL.matcher(imgUrl).matches()){
-            ImageView bookCoverView = (ImageView) rootView.findViewById(R.id.bookCover);
             Glide.with(this)
                     .load(imgUrl)
                     .placeholder(R.drawable.ic_launcher)
                     .error(R.drawable.ic_launcher)
-                    .into(bookCoverView);
-            bookCoverView.setVisibility(View.VISIBLE);
+                    .into(viewHolder.coverView);
+            viewHolder.coverView.setVisibility(View.VISIBLE);
         }
 
         String categories = data.getString(data.getColumnIndex(AlexandriaContract.CategoryEntry.CATEGORY));
-        ((TextView) rootView.findViewById(R.id.categories)).setText(categories);
+        viewHolder.categoriesView.setText(categories);
 
-        rootView.findViewById(R.id.save_button).setVisibility(View.VISIBLE);
-        rootView.findViewById(R.id.delete_button).setVisibility(View.VISIBLE);
+        viewHolder.saveButton.setVisibility(View.VISIBLE);
+        viewHolder.deleteButton.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -199,13 +207,13 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     private void clearFields(){
-        ((TextView) rootView.findViewById(R.id.bookTitle)).setText("");
-        ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText("");
-        ((TextView) rootView.findViewById(R.id.authors)).setText("");
-        ((TextView) rootView.findViewById(R.id.categories)).setText("");
-        rootView.findViewById(R.id.bookCover).setVisibility(View.INVISIBLE);
-        rootView.findViewById(R.id.save_button).setVisibility(View.INVISIBLE);
-        rootView.findViewById(R.id.delete_button).setVisibility(View.INVISIBLE);
+        viewHolder.titleView.setText("");
+        viewHolder.subTitleView.setText("");
+        viewHolder.authorsView.setText("");
+        viewHolder.categoriesView.setText("");
+        viewHolder.coverView.setVisibility(View.INVISIBLE);
+        viewHolder.saveButton.setVisibility(View.INVISIBLE);
+        viewHolder.deleteButton.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -214,8 +222,19 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         activity.setTitle(R.string.scan);
     }
 
-    void updateBarcode(String barcode) {
-        EditText barcodeEditText = (EditText) rootView.findViewById(R.id.ean);
-        barcodeEditText.setText(barcode);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RC_SCAN_BARCODE) {
+            if (data != null && data.hasExtra(BarcodeCaptureActivity.BARCODE)) {
+                String barcode = data.getStringExtra(BarcodeCaptureActivity.BARCODE);
+                updateBarcode(barcode);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void updateBarcode(String barcode) {
+        viewHolder.barcodeEditText.setText(barcode);
     }
 }

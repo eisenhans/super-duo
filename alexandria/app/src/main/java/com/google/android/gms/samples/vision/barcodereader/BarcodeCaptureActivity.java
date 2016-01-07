@@ -50,9 +50,8 @@ import it.jaschke.alexandria.R;
 import it.jaschke.alexandria.services.BookService;
 
 /**
- * Activity for the multi-tracker app.  This app detects barcodes and displays the value with the
- * rear facing camera. During detection overlay graphics are drawn to indicate the position,
- * size, and ID of each barcode.
+ * Copied and adapted from the multi-tracker app. This app detects barcodes and displays the value with the
+ * rear facing camera.
  */
 public final class BarcodeCaptureActivity extends AppCompatActivity {
     private static final String TAG = "Barcode-reader";
@@ -315,11 +314,5 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
                 mCameraSource = null;
             }
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.i(TAG, "requestCode = " + requestCode + ", resultCode = " + resultCode + ", intent = " + data);
     }
 }

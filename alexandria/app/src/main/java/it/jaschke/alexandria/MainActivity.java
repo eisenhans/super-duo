@@ -17,15 +17,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity;
-
 import it.jaschke.alexandria.api.Callback;
 
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, Callback {
     private static final String LOG_TAG = MainActivity.class.getName();
-
-    public static final int RC_SCAN_BARCODE = 1;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -183,18 +179,5 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             finish();
         }
         super.onBackPressed();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data != null && data.hasExtra(BarcodeCaptureActivity.BARCODE)) {
-            String barcode = data.getStringExtra(BarcodeCaptureActivity.BARCODE);
-
-            if (currentFragment instanceof AddBook) {
-                ((AddBook) currentFragment).updateBarcode(barcode);
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
     }
 }

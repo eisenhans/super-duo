@@ -65,8 +65,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/bookCover"
             android:contentDescription="@string/book_cover"
-            android:minHeight="20dip"
-            android:minWidth="20dip"
             android:layout_below="@+id/bookSubTitle"
             android:layout_alignLeft="@+id/bookSubTitle"
             android:layout_alignStart="@+id/bookSubTitle"
