@@ -1,9 +1,11 @@
 package barqsoft.footballscores;
 
+import android.content.Context;
+
 /**
  * Created by yehya khaled on 3/3/2015.
  */
-public class Utilies
+public class Utilities
 {
     public static final int SERIE_A = 357;
     public static final int PREMIER_LEGAUE = 354;
@@ -22,10 +24,11 @@ public class Utilies
             default: return "Not known League Please report";
         }
     }
-    public static String getMatchDay(int match_day,int league_num)
+    public static String getMatchDay(int match_day,int league_num, Context context)
     {
         if(league_num == CHAMPIONS_LEAGUE)
         {
+            // TODO: extract & internationalise strings
             if (match_day <= 6)
             {
                 return "Group Stages, Matchday : 6";
@@ -49,7 +52,7 @@ public class Utilies
         }
         else
         {
-            return "Matchday : " + String.valueOf(match_day);
+            return context.getString(R.string.matchday_text) + ": " + String.valueOf(match_day);
         }
     }
 
@@ -63,6 +66,13 @@ public class Utilies
         {
             return String.valueOf(home_goals) + " - " + String.valueOf(awaygoals);
         }
+    }
+
+    public static String getSpokenMatchResult(String homeTeam, String awayTeam, int homeGoals, int awayGoals, String matchTime, Context context)
+    {
+        return homeTeam + " " + context.getString(R.string.against) + " " + awayTeam + " " +
+                String.valueOf(homeGoals) + " " + context.getString(R.string.to) + " " + String.valueOf(awayGoals) +
+                " " + matchTime;
     }
 
     public static int getTeamCrestByTeamName (String teamname)
@@ -81,6 +91,7 @@ public class Utilies
             case "West Bromwich Albion" : return R.drawable.west_bromwich_albion_hd_logo;
             case "Sunderland AFC" : return R.drawable.sunderland;
             case "Stoke City FC" : return R.drawable.stoke_city;
+            case "Juventus Turin" : return R.drawable.juventus_turin;
             default: return R.drawable.no_icon;
         }
     }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- TODO: translate other strings -->
+    <string name="today">Heute</string>
+    <string name="yesterday">Gestern</string>
+    <string name="tomorrow">Morgen</string>
+
+    <string name="to">zu</string>
+    <string name="against">gegen</string>
+    <string name="matchday_text">Spieltag</string>
+</resources>
