@@ -29,10 +29,10 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
     {
     }
 
-    private void update_scores()
+    private void updateScores()
     {
-        Intent service_start = new Intent(getActivity(), FetchService.class);
-        getActivity().startService(service_start);
+        Intent serviceStart = new Intent(getActivity(), FetchService.class);
+        getActivity().startService(serviceStart);
     }
     public void setFragmentDate(String date)
     {
@@ -41,7 +41,7 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
-        update_scores();
+        updateScores();
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         final ListView score_list = (ListView) rootView.findViewById(R.id.scores_list);
         mAdapter = new ScoresAdapter(getActivity(),null,0);
