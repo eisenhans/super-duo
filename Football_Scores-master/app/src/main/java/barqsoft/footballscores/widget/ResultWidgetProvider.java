@@ -39,13 +39,4 @@ public class ResultWidgetProvider extends AppWidgetProvider {
         Log.i(LOG_TAG, "updating widget");
         context.startService(new Intent(context, ResultWidgetIntentService.class));
     }
-
-//    @Override
-//    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager,
-//                                          int appWidgetId, Bundle newOptions) {
-//
-//
-//
-//        context.startService(new Intent(context, ResultWidgetIntentService.class));
-//    }
 }

@@ -1,13 +1,11 @@
 # super-duo
 Contains two projects which are part of Udacity's Android Nanodegree program.
 
-Alexandria:
+Notes:
 
-FootballScores:
+Alexandria: I use Glide for image loading. This makes it easy to handle the situation when there is no internet connection. Glide also solves two other problems: images are cached (instead of reloaded each time), and there are no more exceptions when the screen is rotated during loading.
 
-1) apiKey:
-
-I applied what I learned in the Android course and did not commit my private apiKey to my public github repository. In order to build the project, you need to define a property
+FootballScores apiKey: I applied what I learned in the Android course and did not commit my private apiKey to my public github repository. In order to build the project, you need to define a property
 
 FootballDataApiKey=`<your api key>`
 
