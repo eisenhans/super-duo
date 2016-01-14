@@ -16,7 +16,8 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/book_cover"
             android:adjustViewBounds="true"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/ic_launcher"
+            android:scaleType="fitStart" />
 
     </FrameLayout>
 
