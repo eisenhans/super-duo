@@ -181,9 +181,11 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         viewHolder.subTitleView.setText(bookSubTitle);
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
-        String[] authorsArr = authors.split(",");
-        viewHolder.authorsView.setLines(authorsArr.length);
-        viewHolder.authorsView.setText(authors.replace(",", "\n"));
+        if (authors != null) {
+            String[] authorsArr = authors.split(",");
+            viewHolder.authorsView.setLines(authorsArr.length);
+            viewHolder.authorsView.setText(authors.replace(",", "\n"));
+        }
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
         if(Patterns.WEB_URL.matcher(imgUrl).matches()){
             Glide.with(this)
